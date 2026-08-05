@@ -1,0 +1,43 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: ledger
+  datasource:
+    url: jdbc:mysql://localhost:3306/ledger?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+    username: root
+    password: root
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    defer-datasource-initialization: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        format_sql: true
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 10MB
+  sql:
+    init:
+      mode: always
+
+app:
+  jwt:
+    secret: ledger-secret-key-for-jwt-token-generation-must-be-at-least-256-bits-long-for-hs256
+    expiration: 86400000  # 24 hours
+  file:
+    upload-dir: ./uploads
+
+risk-scoring:
+  base-url: http://localhost:3001
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html

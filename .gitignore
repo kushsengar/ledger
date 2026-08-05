@@ -1,0 +1,34 @@
+# Dependencies
+node_modules/
+dist/
+build/
+target/
+
+# Environment
+.env
+.env.local
+.env.production
+
+# IDE
+.idea/
+*.iml
+.vscode/settings.json
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Java
+*.class
+*.jar
+*.war
+*.ear
+*.log
+hs_err_pid*
+
+# Uploads
+uploads/
+
+# Coverage
+coverage/
+*.lcov

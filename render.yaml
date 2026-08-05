@@ -1,0 +1,68 @@
+services:
+  # 1. MySQL Database
+  - type: pserv
+    name: ledger-db
+    env: docker
+    repo: https://github.com/kushsengar/ledger.git
+    branch: main
+    dockerContext: .
+    dockerfilePath: ./Dockerfile.mysql
+    envVars:
+      - key: MYSQL_ROOT_PASSWORD
+        value: root
+      - key: MYSQL_DATABASE
+        value: ledger
+    disk:
+      name: mysql-data
+      mountPath: /var/lib/mysql
+      sizeGB: 1
+
+  # 2. Node.js Risk Scoring Service
+  - type: web
+    name: ledger-risk-scoring
+    env: docker
+    repo: https://github.com/kushsengar/ledger.git
+    branch: main
+    dockerContext: ./risk-scoring-service
+    dockerfilePath: ./risk-scoring-service/Dockerfile
+    envVars:
+      - key: PORT
+        value: 3001
+      - key: NODE_ENV
+        value: production
+
+  # 3. Spring Boot Backend
+  - type: web
+    name: ledger-backend
+    env: docker
+    repo: https://github.com/kushsengar/ledger.git
+    branch: main
+    dockerContext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    envVars:
+      - key: SPRING_DATASOURCE_URL
+        value: jdbc:mysql://ledger-db:3306/ledger?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
+      - key: SPRING_DATASOURCE_USERNAME
+        value: root
+      - key: SPRING_DATASOURCE_PASSWORD
+        value: root
+      - key: RISK_SCORING_BASE_URL
+        value: fromService:
+            name: ledger-risk-scoring
+            type: web
+            property: host
+
+  # 4. React Frontend
+  - type: web
+    name: ledger-frontend
+    env: docker
+    repo: https://github.com/kushsengar/ledger.git
+    branch: main
+    dockerContext: ./frontend
+    dockerfilePath: ./frontend/Dockerfile
+    envVars:
+      - key: BACKEND_URL
+        value: fromService:
+            name: ledger-backend
+            type: web
+            property: host

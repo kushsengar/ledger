@@ -1,7 +1,10 @@
 import axios from 'axios';
 
+const backendUrl = (window as any).__ENV__?.BACKEND_URL || '/api/v1';
+const baseURL = backendUrl.endsWith('/api/v1') ? backendUrl : `${backendUrl}/api/v1`;
+
 export const axiosClient = axios.create({
-  baseURL: '/api/v1',
+  baseURL,
 });
 
 axiosClient.interceptors.request.use((config) => {

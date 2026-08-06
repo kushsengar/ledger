@@ -58,10 +58,10 @@ export const LoginPage = () => {
           <h4>Demo Credentials (password: password)</h4>
           <table>
             <tbody>
-              <tr><td>john_applicant</td><td>APPLICANT</td></tr>
-              <tr><td>sarah_officer</td><td>LOAN_OFFICER</td></tr>
-              <tr><td>mike_manager</td><td>BRANCH_MANAGER</td></tr>
-              <tr><td>lisa_risk</td><td>CREDIT_RISK</td></tr>
+              <tr><td>applicant1</td><td>APPLICANT</td></tr>
+              <tr><td>officer1</td><td>LOAN_OFFICER</td></tr>
+              <tr><td>manager1</td><td>BRANCH_MANAGER</td></tr>
+              <tr><td>risk1</td><td>CREDIT_RISK</td></tr>
               <tr><td>admin</td><td>ADMIN</td></tr>
             </tbody>
           </table>

@@ -16,7 +16,7 @@ RUN mkdir -p /etc/nginx/templates && echo 'server { \
         try_files $uri $uri/ /index.html; \
     } \
     location /api/ { \
-        proxy_pass http://${BACKEND_URL}/api/; \
+        proxy_pass ${BACKEND_URL}/api/; \
         proxy_set_header Host $host; \
         proxy_set_header X-Real-IP $remote_addr; \
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; \
@@ -28,6 +28,6 @@ EXPOSE 80
 
 # Set defaults for docker-compose fallback
 ENV PORT=80
-ENV BACKEND_URL=backend:8080
+ENV BACKEND_URL=http://backend:8080
 
 CMD ["nginx", "-g", "daemon off;"]

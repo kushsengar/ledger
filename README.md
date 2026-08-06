@@ -99,11 +99,11 @@ docker-compose up -d
 
 | Username | Password | Role |
 |----------|----------|------|
-| `admin` | `password123` | Admin |
-| `officer1` | `password123` | Loan Officer |
-| `manager1` | `password123` | Branch Manager |
-| `risk1` | `password123` | Credit Risk Officer |
-| `applicant1` | `password123` | Applicant |
+| `admin` | `password` | Admin |
+| `officer1` | `password` | Loan Officer |
+| `manager1` | `password` | Branch Manager |
+| `risk1` | `password` | Credit Risk Officer |
+| `applicant1` | `password` | Applicant |
 
 ## 📐 Design Patterns Used
 

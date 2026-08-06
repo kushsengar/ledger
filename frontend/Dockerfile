@@ -9,7 +9,7 @@ FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
 # Use nginx template to substitute environment variables on startup
 RUN mkdir -p /etc/nginx/templates && echo 'server { \
-    listen 80; \
+    listen ${PORT}; \
     location / { \
         root /usr/share/nginx/html; \
         index index.html index.htm; \
@@ -22,7 +22,12 @@ RUN mkdir -p /etc/nginx/templates && echo 'server { \
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; \
     } \
 }' > /etc/nginx/templates/default.conf.template
+
+# Expose default port
 EXPOSE 80
-# Set default BACKEND_URL in case it's not provided (for docker-compose fallback)
+
+# Set defaults for docker-compose fallback
+ENV PORT=80
 ENV BACKEND_URL=backend:8080
+
 CMD ["nginx", "-g", "daemon off;"]

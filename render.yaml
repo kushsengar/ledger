@@ -40,12 +40,11 @@ services:
     dockerContext: ./backend
     dockerfilePath: ./backend/Dockerfile
     envVars:
-      - key: SPRING_DATASOURCE_URL
-        value: jdbc:mysql://ledger-db:3306/ledger?createDatabaseIfNotExist=true&useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-      - key: SPRING_DATASOURCE_USERNAME
-        value: root
-      - key: SPRING_DATASOURCE_PASSWORD
-        value: root
+      - key: MYSQL_HOST
+        fromService:
+          type: pserv
+          name: ledger-db
+          property: host
       - key: RISK_SCORING_BASE_URL
         value: fromService:
             name: ledger-risk-scoring

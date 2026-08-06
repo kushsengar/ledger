@@ -7,8 +7,8 @@ RUN npm run build
 
 FROM nginx:alpine
 COPY --from=builder /app/dist /usr/share/nginx/html
-# Update nginx configuration to support React Router and proxy API requests
-RUN echo 'server { \
+# Use nginx template to substitute environment variables on startup
+RUN mkdir -p /etc/nginx/templates && echo 'server { \
     listen 80; \
     location / { \
         root /usr/share/nginx/html; \
@@ -16,11 +16,13 @@ RUN echo 'server { \
         try_files $uri $uri/ /index.html; \
     } \
     location /api/ { \
-        proxy_pass http://backend:8080/api/; \
+        proxy_pass http://${BACKEND_URL}/api/; \
         proxy_set_header Host $host; \
         proxy_set_header X-Real-IP $remote_addr; \
         proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for; \
     } \
-}' > /etc/nginx/conf.d/default.conf
+}' > /etc/nginx/templates/default.conf.template
 EXPOSE 80
+# Set default BACKEND_URL in case it's not provided (for docker-compose fallback)
+ENV BACKEND_URL=backend:8080
 CMD ["nginx", "-g", "daemon off;"]

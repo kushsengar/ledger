@@ -34,6 +34,7 @@ public class LoanService {
     private final UserRepository userRepository;
     private final ApprovalStepRepository approvalStepRepository;
     private final AuditService auditService;
+    private final com.ledger.risk.service.RiskScoringClient riskScoringClient;
 
     @Transactional
     public LoanResponse createLoan(LoanApplicationRequest request, String username) {
@@ -63,6 +64,25 @@ public class LoanService {
         Loan loan = getLoan(loanId);
         LoanState state = LoanStateFactory.getState(loan.getStatus());
         state.submit(loan);
+
+        // Fetch Risk Score
+        int age = loan.getApplicant().getDateOfBirth() != null ? 
+                  java.time.Period.between(loan.getApplicant().getDateOfBirth(), java.time.LocalDate.now()).getYears() : 30;
+        
+        com.ledger.risk.dto.RiskScoringRequest riskReq = new com.ledger.risk.dto.RiskScoringRequest(
+            loan.getApplicant().getAnnualIncome(),
+            loan.getApplicant().getMonthlyDebt(),
+            0, // existingLoans
+            2, // employmentYears
+            loan.getRequestedAmount(),
+            loan.getTenureMonths(),
+            loan.getApplicant().getEmploymentType(),
+            age
+        );
+        com.ledger.risk.dto.RiskScoringResponse riskRes = riskScoringClient.getRiskScore(riskReq);
+        loan.setRiskScore(riskRes.score());
+        loan.setRiskCategory(riskRes.riskCategory());
+
         loanRepository.save(loan);
         auditService.logAction("LOAN", loan.getId(), "SUBMITTED", username, "Loan submitted", "127.0.0.1");
     }

@@ -58,7 +58,7 @@ export const DashboardPage = () => {
             <div onClick={() => navigate('/loans?status=REJECTED')} style={{ cursor: 'pointer' }}>
               <StatCard icon={<XCircle />} label="Rejected" value={stats.rejectedLoans} color="var(--accent-rose)" />
             </div>
-            <StatCard icon={<TrendingUp />} label="Approval Rate" value={`${stats.approvalRate}%`} color="var(--accent-emerald)" trend={2.5} />
+            <StatCard icon={<TrendingUp />} label="Approval Rate" value={`${stats.approvalRate.toFixed(1)}%`} color="var(--accent-emerald)" trend={2.5} />
             <StatCard icon={<Timer />} label="Avg Processing" value={`${stats.avgProcessingDays} days`} color="var(--text-secondary)" />
           </div>
 

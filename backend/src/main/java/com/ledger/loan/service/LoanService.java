@@ -156,10 +156,25 @@ public class LoanService {
     }
 
     private LoanResponse mapToResponse(Loan loan) {
+        com.ledger.applicant.dto.ApplicantResponse applicantDto = loan.getApplicant() != null ? new com.ledger.applicant.dto.ApplicantResponse(
+                loan.getApplicant().getId(), loan.getApplicant().getFirstName(), loan.getApplicant().getLastName(),
+                loan.getApplicant().getEmail(), loan.getApplicant().getPhone(), loan.getApplicant().getPanNumber(),
+                loan.getApplicant().getDateOfBirth(), loan.getApplicant().getAddress(), loan.getApplicant().getEmploymentType(),
+                loan.getApplicant().getAnnualIncome(), loan.getApplicant().getMonthlyDebt()
+        ) : null;
+
+        List<com.ledger.document.dto.DocumentResponse> documentDtos = loan.getDocuments().stream().map(d -> new com.ledger.document.dto.DocumentResponse(
+                d.getId(), d.getDocumentType(), d.getFileName(), d.getFileSize(), d.getVerificationStatus(), d.getCreatedAt()
+        )).collect(Collectors.toList());
+
+        List<com.ledger.approval.dto.ApprovalStepResponse> stepDtos = loan.getApprovalSteps().stream().map(s -> new com.ledger.approval.dto.ApprovalStepResponse(
+                s.getId(), s.getStepOrder(), s.getAction().name(), s.getActor().getUsername(), s.getComments(), s.getRequiredRole().name(), s.getActionTimestamp()
+        )).collect(Collectors.toList());
+
         return new LoanResponse(
                 loan.getId(),
                 loan.getApplicationNumber(),
-                loan.getApplicant() != null ? loan.getApplicant().getFirstName() + " " + loan.getApplicant().getLastName() : null,
+                applicantDto,
                 loan.getLoanType(),
                 loan.getRequestedAmount(),
                 loan.getApprovedAmount(),
@@ -168,6 +183,8 @@ public class LoanService {
                 loan.getStatus(),
                 loan.getRiskScore(),
                 loan.getAssignedTo() != null ? loan.getAssignedTo().getUsername() : null,
+                documentDtos,
+                stepDtos,
                 loan.getCreatedAt(),
                 loan.getUpdatedAt()
         );

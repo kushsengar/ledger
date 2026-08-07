@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { loanApi } from '../../api/loanApi';
 import { StatCard } from '../../components/ui/StatCard';
@@ -19,6 +20,7 @@ const mockTrendData = [
 const COLORS = ['#10b981', '#f59e0b', '#3b82f6', '#f43f5e', '#8b5cf6'];
 
 export const DashboardPage = () => {
+  const navigate = useNavigate();
   const { data: stats, isLoading } = useQuery({
     queryKey: ['dashboardStats'],
     queryFn: loanApi.getDashboardStats,
@@ -44,10 +46,18 @@ export const DashboardPage = () => {
       {stats && (
         <div className="dashboard-grid">
           <div className="stats-grid">
-            <StatCard icon={<FileText />} label="Total Loans" value={stats.totalLoans} color="var(--accent-blue)" />
-            <StatCard icon={<Clock />} label="Pending" value={stats.pendingLoans} color="var(--accent-amber)" />
-            <StatCard icon={<CheckCircle />} label="Approved" value={stats.approvedLoans} color="var(--accent-emerald)" />
-            <StatCard icon={<XCircle />} label="Rejected" value={stats.rejectedLoans} color="var(--accent-rose)" />
+            <div onClick={() => navigate('/loans')} style={{ cursor: 'pointer' }}>
+              <StatCard icon={<FileText />} label="Total Loans" value={stats.totalLoans} color="var(--accent-blue)" />
+            </div>
+            <div onClick={() => navigate('/loans?status=SUBMITTED')} style={{ cursor: 'pointer' }}>
+              <StatCard icon={<Clock />} label="Pending" value={stats.pendingLoans} color="var(--accent-amber)" />
+            </div>
+            <div onClick={() => navigate('/loans?status=APPROVED')} style={{ cursor: 'pointer' }}>
+              <StatCard icon={<CheckCircle />} label="Approved" value={stats.approvedLoans} color="var(--accent-emerald)" />
+            </div>
+            <div onClick={() => navigate('/loans?status=REJECTED')} style={{ cursor: 'pointer' }}>
+              <StatCard icon={<XCircle />} label="Rejected" value={stats.rejectedLoans} color="var(--accent-rose)" />
+            </div>
             <StatCard icon={<TrendingUp />} label="Approval Rate" value={`${stats.approvalRate}%`} color="var(--accent-emerald)" trend={2.5} />
             <StatCard icon={<Timer />} label="Avg Processing" value={`${stats.avgProcessingDays} days`} color="var(--text-secondary)" />
           </div>

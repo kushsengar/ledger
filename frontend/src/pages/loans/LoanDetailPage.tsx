@@ -72,22 +72,22 @@ export const LoanDetailPage = () => {
         </div>
         <div className="flex gap-sm">
           {loan.status === 'DRAFT' && hasRole('APPLICANT', 'LOAN_OFFICER') && (
-            <button className="btn btn-primary" onClick={() => handleAction('submit')}>Submit for Review</button>
+            <button className="btn btn-primary" onClick={() => handleAction('submit')} disabled={actionMutation.isPending}>Submit for Review</button>
           )}
           {loan.status === 'SUBMITTED' && hasRole('LOAN_OFFICER', 'BRANCH_MANAGER', 'CREDIT_RISK_OFFICER') && (
-            <button className="btn btn-primary" onClick={() => handleAction('review')}>Start Review</button>
+            <button className="btn btn-primary" onClick={() => handleAction('review')} disabled={actionMutation.isPending}>Start Review</button>
           )}
           {loan.status === 'UNDER_REVIEW' && hasRole('LOAN_OFFICER', 'BRANCH_MANAGER', 'CREDIT_RISK_OFFICER') && (
             <>
-              <button className="btn btn-danger" onClick={() => handleAction('reject')}>Reject</button>
-              <button className="btn btn-secondary" onClick={() => handleAction('escalate')}>Escalate</button>
-              <button className="btn btn-primary" onClick={() => handleAction('approve')}>Approve</button>
+              <button className="btn btn-danger" onClick={() => handleAction('reject')} disabled={actionMutation.isPending}>Reject</button>
+              <button className="btn btn-secondary" onClick={() => handleAction('escalate')} disabled={actionMutation.isPending}>Escalate</button>
+              <button className="btn btn-primary" onClick={() => handleAction('approve')} disabled={actionMutation.isPending}>Approve</button>
             </>
           )}
           {loan.status === 'ESCALATED' && hasRole('BRANCH_MANAGER', 'CREDIT_RISK_OFFICER') && (
             <>
-              <button className="btn btn-danger" onClick={() => handleAction('reject')}>Reject</button>
-              <button className="btn btn-primary" onClick={() => handleAction('approve')}>Approve</button>
+              <button className="btn btn-danger" onClick={() => handleAction('reject')} disabled={actionMutation.isPending}>Reject</button>
+              <button className="btn btn-primary" onClick={() => handleAction('approve')} disabled={actionMutation.isPending}>Approve</button>
             </>
           )}
         </div>

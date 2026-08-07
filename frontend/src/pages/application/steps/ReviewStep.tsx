@@ -1,6 +1,6 @@
 import React from 'react';
 
-export const ReviewStep = ({ formData, onBack, onSubmit, onEdit }: any) => {
+export const ReviewStep = ({ formData, onBack, onSubmit, onEdit, isSubmitting }: any) => {
   return (
     <div>
       <div className="card mb-lg">
@@ -51,7 +51,9 @@ export const ReviewStep = ({ formData, onBack, onSubmit, onEdit }: any) => {
 
       <div className="flex gap-md" style={{ justifyContent: 'space-between', marginTop: 24 }}>
         <button type="button" className="btn btn-secondary" onClick={onBack}>Back</button>
-        <button type="button" className="btn btn-primary" onClick={onSubmit}>Submit Application</button>
+        <button type="button" className="btn btn-primary" onClick={onSubmit} disabled={isSubmitting}>
+          {isSubmitting ? 'Submitting...' : 'Submit Application'}
+        </button>
       </div>
     </div>
   );

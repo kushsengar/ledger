@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { loanApi } from '../../api/loanApi';
 import { Badge } from '../../components/ui/Badge';
@@ -9,9 +9,31 @@ import { format } from 'date-fns';
 const TABS = ['All', 'Draft', 'Submitted', 'Under Review', 'Approved', 'Rejected', 'Escalated'];
 
 export const LoanListPage = () => {
-  const [activeTab, setActiveTab] = useState('All');
+  const [searchParams, setSearchParams] = useSearchParams();
+  
+  const statusToTab: Record<string, string> = {
+    'DRAFT': 'Draft',
+    'SUBMITTED': 'Submitted',
+    'UNDER_REVIEW': 'Under Review',
+    'APPROVED': 'Approved',
+    'REJECTED': 'Rejected',
+    'ESCALATED': 'Escalated'
+  };
+  
+  const initialStatus = searchParams.get('status');
+  const [activeTab, setActiveTab] = useState(initialStatus && statusToTab[initialStatus] ? statusToTab[initialStatus] : 'All');
   const [search, setSearch] = useState('');
   const navigate = useNavigate();
+
+  // Sync tab if URL changes externally
+  useEffect(() => {
+    const status = searchParams.get('status');
+    if (status && statusToTab[status]) {
+      setActiveTab(statusToTab[status]);
+    } else if (!status) {
+      setActiveTab('All');
+    }
+  }, [searchParams]);
 
   const statusMap: Record<string, string> = {
     'All': '',
@@ -55,7 +77,15 @@ export const LoanListPage = () => {
           <button 
             key={tab} 
             className={`filter-tab ${activeTab === tab ? 'active' : ''}`}
-            onClick={() => setActiveTab(tab)}
+            onClick={() => {
+              setActiveTab(tab);
+              if (tab === 'All') {
+                searchParams.delete('status');
+              } else {
+                searchParams.set('status', statusMap[tab]);
+              }
+              setSearchParams(searchParams);
+            }}
           >
             {tab}
           </button>

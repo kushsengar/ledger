@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useMultiStepForm } from '../../hooks/useMultiStepForm';
 import { WizardFormData } from '../../types';
@@ -24,8 +24,11 @@ export const LoanWizard = () => {
   ], defaultValues);
   
   const navigate = useNavigate();
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleFinalSubmit = async () => {
+    if (isSubmitting) return;
+    setIsSubmitting(true);
     try {
       const applicant = await applicantApi.createApplicant({
         firstName: formData.firstName, lastName: formData.lastName, email: formData.email,
@@ -52,6 +55,8 @@ export const LoanWizard = () => {
       navigate(`/loans/${loan.id}`);
     } catch (err: any) {
       toast.error('Failed to submit application: ' + (err.response?.data?.message || err.message));
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -63,7 +68,7 @@ export const LoanWizard = () => {
         {currentStep === 0 && <PersonalInfoStep formData={formData} updateFields={updateFields} onNext={next} />}
         {currentStep === 1 && <FinancialDetailsStep formData={formData} updateFields={updateFields} onNext={next} onBack={prev} />}
         {currentStep === 2 && <DocumentUploadStep formData={formData} updateFields={updateFields} onNext={next} onBack={prev} />}
-        {currentStep === 3 && <ReviewStep formData={formData} onBack={prev} onSubmit={handleFinalSubmit} onEdit={goTo} />}
+        {currentStep === 3 && <ReviewStep formData={formData} onBack={prev} onSubmit={handleFinalSubmit} onEdit={goTo} isSubmitting={isSubmitting} />}
       </div>
     </div>
   );

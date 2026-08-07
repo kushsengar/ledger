@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { loanApi } from '../../api/loanApi';
+import { useAuth } from '../../hooks/useAuth';
 import { Badge } from '../../components/ui/Badge';
 import { Spinner } from '../../components/ui/Spinner';
 import { format } from 'date-fns';
@@ -10,6 +11,7 @@ const TABS = ['All', 'Draft', 'Submitted', 'Under Review', 'Approved', 'Rejected
 
 export const LoanListPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
+  const { hasRole } = useAuth();
   
   const statusToTab: Record<string, string> = {
     'DRAFT': 'Draft',
@@ -104,7 +106,7 @@ export const LoanListPage = () => {
                 <th>Type</th>
                 <th>Amount</th>
                 <th>Status</th>
-                <th>Risk Score</th>
+                {hasRole('LOAN_OFFICER', 'BRANCH_MANAGER', 'CREDIT_RISK_OFFICER', 'ADMIN') && <th>Risk Score</th>}
                 <th>Date</th>
               </tr>
             </thead>
@@ -116,7 +118,9 @@ export const LoanListPage = () => {
                   <td>{loan.loanType}</td>
                   <td className="amount">₹{loan.requestedAmount.toLocaleString()}</td>
                   <td><Badge status={loan.status} /></td>
-                  <td>{loan.riskScore ? <span className={loan.riskScore > 70 ? 'text-emerald' : 'text-amber'}>{loan.riskScore}</span> : '-'}</td>
+                  {hasRole('LOAN_OFFICER', 'BRANCH_MANAGER', 'CREDIT_RISK_OFFICER', 'ADMIN') && (
+                    <td>{loan.riskScore ? <span className={loan.riskScore > 70 ? 'text-emerald' : 'text-amber'}>{loan.riskScore}</span> : '-'}</td>
+                  )}
                   <td>{format(new Date(loan.createdAt), 'MMM dd, yyyy')}</td>
                 </tr>
               ))}

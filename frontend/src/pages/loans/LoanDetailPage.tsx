@@ -139,22 +139,24 @@ export const LoanDetailPage = () => {
         </div>
 
         <div className="flex flex-col gap-md">
-          <div className="card">
-            <div className="card-header"><h3>Risk Assessment</h3></div>
-            {loan.riskScore ? (
-              <>
-                <div className="text-center mb-md">
-                  <div className={`amount ${loan.riskScore > 70 ? 'text-emerald' : 'text-amber'}`} style={{ fontSize: '3rem' }}>
-                    {loan.riskScore}
+          {hasRole('LOAN_OFFICER', 'BRANCH_MANAGER', 'CREDIT_RISK_OFFICER', 'ADMIN') && (
+            <div className="card">
+              <div className="card-header"><h3>Risk Assessment</h3></div>
+              {loan.riskScore ? (
+                <>
+                  <div className="text-center mb-md">
+                    <div className={`amount ${loan.riskScore > 70 ? 'text-emerald' : 'text-amber'}`} style={{ fontSize: '3rem' }}>
+                      {loan.riskScore}
+                    </div>
+                    <div className="text-sm text-muted">Risk Score</div>
                   </div>
-                  <div className="text-sm text-muted">Risk Score</div>
-                </div>
-                <div><label className="text-muted text-sm">Category</label><div>{loan.riskCategory}</div></div>
-              </>
-            ) : (
-              <p className="text-muted">Not assessed yet.</p>
-            )}
-          </div>
+                  <div><label className="text-muted text-sm">Category</label><div>{loan.riskCategory}</div></div>
+                </>
+              ) : (
+                <p className="text-muted">Not assessed yet.</p>
+              )}
+            </div>
+          )}
 
           <div className="card">
             <div className="card-header"><h3>Approval Timeline</h3></div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/useAuth';
 import { toast } from 'sonner';
 
@@ -49,10 +49,16 @@ export const LoginPage = () => {
               required 
             />
           </div>
-          <button type="submit" className="btn btn-primary" style={{ width: '100%' }} disabled={isLoading}>
-            {isLoading ? 'Logging in...' : 'Sign In'}
+          <button type="submit" className="login-btn" disabled={isLoading}>
+            {isLoading ? 'Authenticating...' : 'Sign In'}
           </button>
         </form>
+
+        <div style={{ textAlign: 'center', marginTop: '20px' }}>
+          <p className="text-muted">
+            Don't have an account? <Link to="/register" style={{ color: 'var(--accent-blue)', textDecoration: 'none' }}>Sign Up</Link>
+          </p>
+        </div>
 
         <div className="demo-credentials">
           <h4>Demo Credentials (password: password)</h4>

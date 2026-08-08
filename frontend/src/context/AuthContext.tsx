@@ -7,6 +7,7 @@ interface AuthContextType {
   loading: boolean;
   isAuthenticated: boolean;
   login: (username: string, password: string) => Promise<void>;
+  register: (registerData: any) => Promise<void>;
   logout: () => void;
   hasRole: (...roles: UserRole[]) => boolean;
 }
@@ -45,13 +46,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
   };
 
+  const register = async (registerData: any) => {
+    const data = await authApi.register(registerData);
+    localStorage.setItem('ledger_token', data.token);
+    const userData = await authApi.getMe();
+    setUser(userData);
+  };
+
   const hasRole = (...roles: UserRole[]) => {
     if (!user) return false;
     return roles.includes(user.role);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, isAuthenticated: !!user, login, logout, hasRole }}>
+    <AuthContext.Provider value={{ user, loading, isAuthenticated: !!user, login, register, logout, hasRole }}>
       {children}
     </AuthContext.Provider>
   );

@@ -9,5 +9,13 @@ export const applicantApi = {
   getApplicants: async (): Promise<Applicant[]> => {
     const { data } = await axiosClient.get('/applicants');
     return data;
+  },
+  getApplicantById: async (id: number): Promise<Applicant> => {
+    const { data } = await axiosClient.get(`/applicants/${id}`);
+    return data;
+  },
+  updateApplicant: async (id: number, applicantData: any): Promise<Applicant> => {
+    const { data } = await axiosClient.put(`/applicants/${id}`, applicantData);
+    return data;
   }
 };

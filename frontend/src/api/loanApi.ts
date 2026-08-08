@@ -39,7 +39,7 @@ export const loanApi = {
     return data;
   },
   getLoanAudit: async (id: number): Promise<any[]> => {
-    const { data } = await axiosClient.get(`/loans/${id}/audit`);
+    const { data } = await axiosClient.get(`/audit?entityType=LOAN&entityId=${id}`);
     return data;
   },
   getDashboardStats: async (): Promise<DashboardStats> => {

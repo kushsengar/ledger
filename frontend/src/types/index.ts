@@ -98,3 +98,14 @@ export interface WizardFormData {
   tenureMonths: number;
   documents: Array<{ file: File; documentType: DocumentType }>;
 }
+
+export interface AuditLog {
+  id: number;
+  entityType: string;
+  entityId: number;
+  action: string;
+  actorUsername: string;
+  details: string;
+  ipAddress: string;
+  timestamp: string;
+}

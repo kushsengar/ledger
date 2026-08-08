@@ -1,29 +1,45 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { axiosClient } from '../../api/axiosClient';
+import { auditApi } from '../../api/auditApi';
 import { format } from 'date-fns';
 import { Spinner } from '../../components/ui/Spinner';
 
 export const AuditLogPage = () => {
+  const [search, setSearch] = useState('');
+
   const { data: logs, isLoading } = useQuery({
     queryKey: ['auditLogs'],
-    queryFn: async () => {
-      const { data } = await axiosClient.get('/audit/all');
-      return data;
-    },
+    queryFn: auditApi.getAllAuditLogs,
   });
+
+  const filteredLogs = logs?.filter(log => 
+    log.entityType.toLowerCase().includes(search.toLowerCase()) || 
+    log.action.toLowerCase().includes(search.toLowerCase()) ||
+    log.actorUsername.toLowerCase().includes(search.toLowerCase()) ||
+    (log.details && log.details.toLowerCase().includes(search.toLowerCase()))
+  ).sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
 
   return (
     <div>
-      <div className="page-header">
-        <h1 className="page-title">Audit Log</h1>
-        <div className="page-subtitle">System-wide activity tracking</div>
+      <div className="page-header flex-between">
+        <div>
+          <h1 className="page-title">Global Audit Logs</h1>
+          <div className="page-subtitle">Track all system activities and changes</div>
+        </div>
+        <input 
+          type="text" 
+          placeholder="Search logs..." 
+          className="form-input" 
+          style={{ width: 300 }}
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+        />
       </div>
 
       <div className="card" style={{ padding: 0, overflow: 'hidden' }}>
         {isLoading ? (
           <div className="flex items-center justify-center p-lg" style={{ padding: 40 }}><Spinner /></div>
-        ) : logs && logs.length > 0 ? (
+        ) : filteredLogs && filteredLogs.length > 0 ? (
           <table className="table">
             <thead>
               <tr>
@@ -36,13 +52,13 @@ export const AuditLogPage = () => {
               </tr>
             </thead>
             <tbody>
-              {logs.map((log: any) => (
+              {filteredLogs.map(log => (
                 <tr key={log.id}>
-                  <td className="text-sm">{format(new Date(log.timestamp), 'MMM dd, yyyy HH:mm:ss')}</td>
+                  <td className="text-sm" style={{ whiteSpace: 'nowrap' }}>{format(new Date(log.timestamp), 'MMM dd, yyyy HH:mm')}</td>
                   <td>{log.entityType}</td>
                   <td>{log.entityId}</td>
                   <td><span className="badge badge-submitted">{log.action}</span></td>
-                  <td>{log.actorUsername}</td>
+                  <td><span className="font-semibold">{log.actorUsername}</span></td>
                   <td className="text-sm text-muted max-w-xs truncate" title={log.details}>{log.details?.substring(0, 50)}{log.details?.length > 50 ? '...' : ''}</td>
                 </tr>
               ))}
